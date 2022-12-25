@@ -3,4 +3,4 @@
 - MySql
 - Node.js / Express.js
 
-demo:
+demo: https://misty-bread.surge.sh/ (with dummy data)
