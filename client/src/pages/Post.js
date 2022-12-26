@@ -1,39 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Suggestions from "../components/Suggestions";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Post() {
-  const posts = [
-    {
-      id: 1,
-      title: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. A possimus excepturi aliquid nihil cumque ipsam facere aperiam at! Ea dolorem ratione sit debitis deserunt repellendus numquam ab vel perspiciatis corporis! Lorem, ipsum dolor sit amet consectetur adipisicing elit. A possimus excepturi aliquid nihil cumque ipsam facere aperiam at! Ea dolorem ratione sit debitis deserunt repellendus numquam ab vel perspiciatis corporis!Lorem, ipsum dolor sit amet consectetur adipisicing elit. A possimus excepturi aliquid nihil cumque ipsam facere aperiam at! Ea dolorem ratione sit debitis deserunt repellendus numquam ab vel perspiciatis corporis!",
-      img: "https://images.pexels.com/photos/7008010/pexels-photo-7008010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-  ];
+  const [post, setPost] = useState({});
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const postId = location.pathname.split("/")[2];
+  console.log(postId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/http://localhost:8800/api/posts/:${postId}`);
+        setPost(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [postId]);
   return (
     <div className="post">
       <div className="container">
-        {posts.map((post) => (
-          <div className="blog" key={post.id}>
-            <img src={post.img}></img>
-            <h1>{post.title}</h1>
-            <div className="user">
-              <img src={post.img} className="pic"></img>
-              <div className="text">
-                <div className="name">Yavuz Bilge Ceylan</div>
-                <div className="time">2m ago</div>
+        {post.length}
+        {post.length &&
+          post.map((post) => (
+            <div className="blog" key={post.id}>
+              <img src={post.img}></img>
+              <h1>{post.title}</h1>
+              <div className="user">
+                <img src={post.img} className="pic"></img>
+                <div className="text">
+                  <div className="name">Yavuz Bilge Ceylan</div>
+                  <div className="time">2m ago</div>
+                </div>
+                <div className="control">
+                  <Link to={`/add?edit=${post.id}`}>
+                    <button>edit post</button>
+                  </Link>
+                  <button>delete</button>
+                </div>
               </div>
-              <div className="control">
-                <Link to={`/add?edit=${post.id}`}>
-                  <button>edit post</button>
-                </Link>
-                <button>delete</button>
-              </div>
+              <div className="desc">{post.desc}</div>
             </div>
-            <div className="desc">{post.desc}</div>
-          </div>
-        ))}
+          ))}
         <Suggestions />
       </div>
     </div>
